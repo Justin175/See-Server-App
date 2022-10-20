@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#daebf9">
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Geben Sie den Benutzernamen an:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/ms_bill_info_add_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="Benutzername"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+    <Button
+        android:id="@+id/ms_bill_info_add_user_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Benutzer hinzufügen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ms_bill_info_add_user_priv_write" />
+
+    <Button
+        android:id="@+id/ms_bill_info_add_user_btn_break"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/red"
+        android:text="Abbrechen"
+        app:layout_constraintEnd_toEndOf="@+id/ms_bill_info_add_user_btn"
+        app:layout_constraintStart_toStartOf="@+id/ms_bill_info_add_user_btn"
+        app:layout_constraintTop_toBottomOf="@+id/ms_bill_info_add_user_btn" />
+
+    <CheckBox
+        android:id="@+id/ms_bill_info_add_user_priv_read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Lesen"
+        android:checked="true"
+        app:layout_constraintStart_toStartOf="@+id/textView24"
+        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+
+    <CheckBox
+        android:id="@+id/ms_bill_info_add_user_priv_write"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Schreiben"
+        app:layout_constraintStart_toEndOf="@+id/ms_bill_info_add_user_priv_read"
+        app:layout_constraintTop_toTopOf="@+id/ms_bill_info_add_user_priv_read" />
+
+    <CheckBox
+        android:id="@+id/ms_bill_info_add_user_priv_configure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="Konfigurieren"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/ms_bill_info_add_user_priv_write"
+        app:layout_constraintTop_toTopOf="@+id/ms_bill_info_add_user_priv_read" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Welche Berechtigungen soll der Nutzer besitzen:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/ms_bill_info_add_user_name"
+        app:layout_constraintTop_toBottomOf="@+id/ms_bill_info_add_user_name" />
+</androidx.constraintlayout.widget.ConstraintLayout>
