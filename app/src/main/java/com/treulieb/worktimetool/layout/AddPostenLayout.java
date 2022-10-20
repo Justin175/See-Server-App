@@ -55,9 +55,6 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         for(Bill.BillUser user : currentBill.getUsers())
             arrayAdapter.add(user.getName());
 
-        for(int i = 0;  i < 10; i++)
-            arrayAdapter.add("T " + i);
-
         billMarkedUseres = new boolean[arrayAdapter.getCount()];
         ((ListView) findViewById(R.id.ms_bill_info_add_posten_users)).setAdapter(arrayAdapter);
     }

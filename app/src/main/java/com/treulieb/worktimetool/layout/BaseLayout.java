@@ -82,6 +82,11 @@ public abstract class BaseLayout<T extends View> {
         return activity.findViewById(id);
     }
 
+    protected boolean hasPrivileg(Bill.BillPrivilege priv, Bill bill) {
+        Bill.BillUser thisUser = bill.getUser(SeeServerRequests.getNAME());
+        return thisUser.hasPrivilige(priv);
+    }
+
     protected void makeErrorToast(String errorCategorieStr) {
         makeToast("Ein Fehler beim " + errorCategorieStr + " ist aufgetreten.");
     }

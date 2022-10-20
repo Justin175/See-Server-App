@@ -24,6 +24,9 @@
     <include layout="@layout/ms_bill_info_add_posten"
         android:visibility="gone" />
 
+    <include layout="@layout/ms_bill_info_users"
+        android:visibility="gone"/>
+
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

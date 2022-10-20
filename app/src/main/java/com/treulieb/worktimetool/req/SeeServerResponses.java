@@ -247,6 +247,13 @@ public class SeeServerResponses {
         }
     }
 
+    public static class ResponseRemoveUserFromBill extends EmptyResponse {
+
+        public ResponseRemoveUserFromBill(JSONObject data) {
+            super(data);
+        }
+    }
+
     @FunctionalInterface
     public static interface ResponseCallback<T extends BaseResponse> {
         public void onResponse(T response);

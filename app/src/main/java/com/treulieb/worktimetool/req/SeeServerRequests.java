@@ -201,6 +201,22 @@ public final class SeeServerRequests {
         doDefaultGenericPost("addUserToBill", listener, errorListener, toPost, SeeServerResponses.ResponseAddUserToBill.class);
     }
 
+    public static void removeUserFromBill(String billName, String userName, SeeServerResponses.ResponseCallback<SeeServerResponses.ResponseRemoveUserFromBill> listener, Response.ErrorListener errorListener) {
+        JSONObject toPost = new JSONObject();
+        JSONObject bill = new JSONObject();
+
+        try {
+            bill.put("name", billName);
+            bill.put("user", userName);
+
+            toPost.put("bill", bill);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        doDefaultGenericPost("removeUserFromBill", listener, errorListener, toPost, SeeServerResponses.ResponseRemoveUserFromBill.class);
+    }
+
     /* ---------------------------- DEFAULTS ---------------------------- */
 
     private static void doDefaultPost(String uri, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {

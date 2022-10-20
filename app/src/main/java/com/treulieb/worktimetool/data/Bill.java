@@ -2,6 +2,7 @@ package com.treulieb.worktimetool.data;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -56,6 +57,25 @@ public class Bill {
 
         this.posten = nPosten;
         this.costsSum = costs;
+    }
+
+    public void removeUser(int index) {
+        BillUser[] users = new BillUser[this.users.length - 1];
+        BillUser toRemove = this.users[index];
+
+        int i = 0;
+        for(BillUser a : this.users){
+            if(a != toRemove)
+                users[i] = a;
+        }
+
+        this.users = users;
+    }
+
+    public void addUser(BillUser user) {
+        BillUser[] users = Arrays.copyOf(this.users, this.users.length + 1);
+        users[users.length - 1] = user;
+        this.users = users;
     }
 
     public BillUser getCreator() {

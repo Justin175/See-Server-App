@@ -32,6 +32,7 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
     private boolean[] billMarkedUseres;
 
     private AddPostenLayout addPostenLayout;
+    private BillUsersLayout billUsersLayout;
 
     public BillInfoLayout(Activity activity, ViewManager viewManager, ConstraintLayout thisView, View parentView) {
         super(activity, viewManager, thisView, parentView);
@@ -40,6 +41,7 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
     @Override
     protected void setup() {
         addPostenLayout = new AddPostenLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_add_posten), this);
+        billUsersLayout = new BillUsersLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_users), this);
     }
 
     public Bill getCurrentBill() {
@@ -60,13 +62,6 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
         ((TextView) findViewById(R.id.ms_bill_info_created)).setText(bill.getCreated());
         ((TextView) findViewById(R.id.ms_bill_info_creator)).setText(creator = bill.getCreator().getName());
         ((TextView) findViewById(R.id.ms_bill_info_costs_sum)).setText(bill.getCostsSum() + " €");
-
-        // findViewById(R.id.ms_bill_info_btn_delete).setVisibility(SeeServerRequests.getNAME().equals(creator) ? View.VISIBLE : View.GONE);
-
-        // if(bill.getUser(SeeServerRequests.getNAME()).hasPrivilige(Bill.BillPrivilege.WRITE))
-        //    findViewById(R.id.ms_bill_info_btn_add_posten).setVisibility(View.VISIBLE);
-        //else
-        //   findViewById(R.id.ms_bill_info_btn_add_posten).setVisibility(View.GONE);
 
         ListView postenView = findViewById(R.id.ms_bill_info_posten);
         LayoutInflater inflater = LayoutInflater.from(activity);
@@ -129,7 +124,16 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
             });
         }
         if(hasPrivileg(Bill.BillPrivilege.WRITE))
-            menu.getMenu().add("Posten hinzufügen").setOnMenuItemClickListener(item -> {addPostenLayout.show(); return true;});
+            menu.getMenu().add("Posten hinzufügen").setOnMenuItemClickListener(item -> {
+                addPostenLayout.show();
+                return true;
+            });
+        if(hasPrivileg(Bill.BillPrivilege.READ)){
+            menu.getMenu().add("Benutzer anzeigen").setOnMenuItemClickListener(item -> {
+                billUsersLayout.show();
+                return true;
+            });
+        }
 
         // Listener hinzufügen
 
@@ -177,9 +181,11 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
         if(privConfigure)
             privString += Bill.BillPrivilege.toString(Bill.BillPrivilege.CONFIGURE);
 
+        final String finalPrivString = privString;
         SeeServerRequests.addUserToBill(currentBill.getName(), name, privString, response -> {
             if(response.isSuccessful()) {
                 makeToast("Der Nutzer wurde erfolgreich hinzugefügt.");
+                currentBill.addUser(new Bill.BillUser(name, Bill.BillPrivilege.fromString(finalPrivString)));
                 popupWindow.dismiss();
             }
             else makeToast(response.getMessage());
@@ -188,8 +194,7 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
         });
     }
 
-    private boolean hasPrivileg(Bill.BillPrivilege priv){
-        Bill.BillUser thisUser = currentBill.getUser(SeeServerRequests.getNAME());
-        return thisUser.hasPrivilige(priv);
+    protected boolean hasPrivileg(Bill.BillPrivilege priv) {
+        return super.hasPrivileg(priv, currentBill);
     }
 }
