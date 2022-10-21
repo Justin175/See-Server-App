@@ -127,6 +127,10 @@ public class Bill {
             return false;
         }
 
+        public void setPrivileges(BillPrivilege[] privileges) {
+            this.privileges = privileges;
+        }
+
         public static BillUser fromJSON(String name, JSONObject userData) {
             return new BillUser(name, BillPrivilege.fromString(userData.optString(name)));
         }
