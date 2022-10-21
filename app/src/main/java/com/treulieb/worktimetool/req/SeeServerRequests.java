@@ -217,6 +217,24 @@ public final class SeeServerRequests {
         doDefaultGenericPost("removeUserFromBill", listener, errorListener, toPost, SeeServerResponses.ResponseRemoveUserFromBill.class);
     }
 
+    public static void updateUserFromBill(String billName, String userName, String privsStr, SeeServerResponses.ResponseCallback<SeeServerResponses.ResponseUpdateUserPrivileges> listener, Response.ErrorListener errorListener) {
+        JSONObject toPost = new JSONObject();
+        JSONObject bill = new JSONObject();
+
+        try {
+            bill.put("name", billName);
+            bill.put("user", userName);
+            bill.put("privileges", privsStr);
+
+            toPost.put("bill", bill);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        doDefaultGenericPost("removeUserFromBill", listener, errorListener, toPost, SeeServerResponses.ResponseUpdateUserPrivileges.class);
+    }
+
+
     /* ---------------------------- DEFAULTS ---------------------------- */
 
     private static void doDefaultPost(String uri, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
@@ -243,7 +261,7 @@ public final class SeeServerRequests {
                 setTOKEN(JSONUtils.getString(response, "token"));
             }
             else {
-                Toast.makeText(activity, response.optString("msg", "Unbekannter Fehler."), Toast.LENGTH_LONG);
+                Toast.makeText(activity, response.optString("msg", "Unbekannter Fehler."), Toast.LENGTH_LONG).show();
 
                 if(response.optString("msg", "").endsWith("Bitte neu anmelden.")) {
                     activity.finish(); // Activity wird beendet
@@ -278,7 +296,7 @@ public final class SeeServerRequests {
                 setTOKEN(JSONUtils.getString(response, "token"));
             }
             else {
-                Toast.makeText(activity, response.optString("msg", "Unbekannter Fehler."), Toast.LENGTH_LONG);
+                Toast.makeText(activity, response.optString("msg", "Unbekannter Fehler."), Toast.LENGTH_LONG).show();
 
                 if(response.optString("msg", "").endsWith("Bitte neu anmelden.")) {
                     activity.finish(); // Activity wird beendet

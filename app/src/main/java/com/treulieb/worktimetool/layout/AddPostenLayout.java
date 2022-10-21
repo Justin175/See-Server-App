@@ -12,8 +12,11 @@ import com.treulieb.worktimetool.ViewManager;
 import com.treulieb.worktimetool.data.Bill;
 import com.treulieb.worktimetool.req.SeeServerRequests;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class AddPostenLayout extends BaseLayout<ScrollView> {
 
@@ -29,9 +32,7 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
 
     @Override
     protected void setup() {
-        super.thisView.findViewById(R.id.ms_bill_info_add_posten_btn).setOnClickListener(v -> {
-            addPosten();
-        });
+        super.thisView.findViewById(R.id.ms_bill_info_add_posten_btn).setOnClickListener(v -> addPosten());
     }
 
     @Override
@@ -47,13 +48,9 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(activity, R.layout.support_simple_spinner_dropdown_item);
         List<Bill.BillUser> users = new LinkedList<>();
-        for(Bill.BillUser a : currentBill.getUsers())
-            users.add(a);
         users.add(currentBill.getCreator());
-        users.stream().map(x -> x.getName()).filter(s -> !s.equals(SeeServerRequests.getNAME())).forEach(arrayAdapter::add);
-
-        for(Bill.BillUser user : currentBill.getUsers())
-            arrayAdapter.add(user.getName());
+        Collections.addAll(users, currentBill.getUsers());
+        users.stream().map(Bill.BillUser::getName).forEach(arrayAdapter::add);
 
         billMarkedUseres = new boolean[arrayAdapter.getCount()];
         ((ListView) findViewById(R.id.ms_bill_info_add_posten_users)).setAdapter(arrayAdapter);
@@ -83,7 +80,15 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         if(creator.length() == 0)
             creator = null;
 
-        SeeServerRequests.addPosten(currentBill.getName(), title, Float.parseFloat(costs), info, null, creator, response -> {
+        List<String> toUsersNames = new LinkedList<>();
+        ArrayAdapter<String> userNamesListAdapter = (ArrayAdapter<String>) ((ListView) findViewById(R.id.ms_bill_info_add_posten_users)).getAdapter();
+        for(int i = 0; i < billMarkedUseres.length; i++) {
+            if(billMarkedUseres[i]){
+                toUsersNames.add(userNamesListAdapter.getItem(i));
+            }
+        }
+
+        SeeServerRequests.addPosten(currentBill.getName(), title, Float.parseFloat(costs), info, toUsersNames.toArray(new String[toUsersNames.size()]), creator, response -> {
             if(response.isSuccessful()){
                 SeeServerRequests.getBill(currentBill.getName(), response1 -> {
                     if(response1.isSuccessful())

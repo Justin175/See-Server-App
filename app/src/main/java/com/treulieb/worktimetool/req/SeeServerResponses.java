@@ -254,8 +254,15 @@ public class SeeServerResponses {
         }
     }
 
+    public static class ResponseUpdateUserPrivileges extends EmptyResponse {
+
+        public ResponseUpdateUserPrivileges(JSONObject data) {
+            super(data);
+        }
+    }
+
     @FunctionalInterface
-    public static interface ResponseCallback<T extends BaseResponse> {
-        public void onResponse(T response);
+    public interface ResponseCallback<T extends BaseResponse> {
+        void onResponse(T response);
     }
 }
