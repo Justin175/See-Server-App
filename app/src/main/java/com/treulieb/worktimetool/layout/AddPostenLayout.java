@@ -1,6 +1,7 @@
 package com.treulieb.worktimetool.layout;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -11,18 +12,23 @@ import com.treulieb.worktimetool.R;
 import com.treulieb.worktimetool.ViewManager;
 import com.treulieb.worktimetool.data.Bill;
 import com.treulieb.worktimetool.req.SeeServerRequests;
+import com.treulieb.worktimetool.utils.BillUserListAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AddPostenLayout extends BaseLayout<ScrollView> {
 
     private BillInfoLayout billInfoLayout;
     private Bill currentBill;
-    private boolean[] billMarkedUseres;
+
+    private List<Bill.BillUser> billMarkedUseres;
+    private List<Bill.BillUser> allUsers;
 
     public AddPostenLayout(Activity activity, ViewManager viewManager, ScrollView thisView, BillInfoLayout parentView) {
         super(activity, viewManager, thisView, parentView);
@@ -33,6 +39,9 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
     @Override
     protected void setup() {
         super.thisView.findViewById(R.id.ms_bill_info_add_posten_btn).setOnClickListener(v -> addPosten());
+
+        this.billMarkedUseres = new LinkedList<>();
+        this.allUsers = new ArrayList<>();
     }
 
     @Override
@@ -46,14 +55,27 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         ((EditText) thisView.findViewById(R.id.ms_bill_info_add_posten_info)).setText("");
         ((EditText) thisView.findViewById(R.id.ms_bill_info_add_posten_creator)).setText("");
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(activity, R.layout.support_simple_spinner_dropdown_item);
-        List<Bill.BillUser> users = new LinkedList<>();
-        users.add(currentBill.getCreator());
-        Collections.addAll(users, currentBill.getUsers());
-        users.stream().map(Bill.BillUser::getName).forEach(arrayAdapter::add);
+        this.billMarkedUseres.clear();
+        this.allUsers.clear();
 
-        billMarkedUseres = new boolean[arrayAdapter.getCount()];
-        ((ListView) findViewById(R.id.ms_bill_info_add_posten_users)).setAdapter(arrayAdapter);
+        allUsers.add(currentBill.getCreator());
+        allUsers.addAll(Arrays.asList(currentBill.getUsers()));
+
+        billMarkedUseres.addAll(allUsers);
+
+        ListView usersListView = ((ListView) findViewById(R.id.ms_bill_info_add_posten_users));
+        usersListView.setAdapter(new BillUserListAdapter(activity, allUsers, true));
+        usersListView.setOnItemClickListener((parent, view, position, id) -> {
+            Bill.BillUser clickedOn = this.allUsers.get(position);
+            boolean contains;
+
+            if(contains = this.billMarkedUseres.contains(clickedOn))
+                this.billMarkedUseres.remove(clickedOn);
+            else
+                this.billMarkedUseres.add(clickedOn);
+
+            view.setBackgroundColor(!contains ? Color.parseColor("#a3e6f5") : 0);
+        });
     }
 
     private void addPosten() {
@@ -80,15 +102,13 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         if(creator.length() == 0)
             creator = null;
 
-        List<String> toUsersNames = new LinkedList<>();
-        ArrayAdapter<String> userNamesListAdapter = (ArrayAdapter<String>) ((ListView) findViewById(R.id.ms_bill_info_add_posten_users)).getAdapter();
-        for(int i = 0; i < billMarkedUseres.length; i++) {
-            if(billMarkedUseres[i]){
-                toUsersNames.add(userNamesListAdapter.getItem(i));
-            }
-        }
-
-        SeeServerRequests.addPosten(currentBill.getName(), title, Float.parseFloat(costs), info, toUsersNames.toArray(new String[toUsersNames.size()]), creator, response -> {
+        SeeServerRequests.addPosten(
+                currentBill.getName(),
+                title, Float.parseFloat(costs),
+                info,
+                billMarkedUseres.stream().map(Bill.BillUser::getName).collect(Collectors.toList()).toArray(new String[0]),
+                creator,
+                response -> {
             if(response.isSuccessful()){
                 SeeServerRequests.getBill(currentBill.getName(), response1 -> {
                     if(response1.isSuccessful())

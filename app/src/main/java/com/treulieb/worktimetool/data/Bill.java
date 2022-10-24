@@ -24,6 +24,53 @@ public class Bill {
         this.costsSum = costsSum;
     }
 
+    public List<BillUser> getAllUsers() {
+        return getAllUsers(null);
+    }
+
+    public List<Posten> getPostenPaidedFrom(BillUser user) {
+        return getPostenPaidedFrom(user.name);
+    }
+
+    public List<Posten> getPostenPaidedFrom(String user) {
+        List<Posten> postens = new LinkedList<>();
+
+        for(Posten a : posten)
+            if(a.getCreator().equals(user))
+                postens.add(a);
+
+        return postens;
+    }
+
+    public List<Posten> getToPayPosten(BillUser user) {
+        return getToPayPosten(user.name);
+    }
+
+    public List<Posten> getToPayPosten(String user) {
+        List<Posten> postens = new LinkedList<>();
+
+        for(Posten a : posten)
+            if(a.containsTo(user))
+                postens.add(a);
+
+        return postens;
+    }
+
+    public List<BillUser> getAllUsers(String except) {
+        if(except == null)
+            except = "$";
+
+        List<BillUser> users = new LinkedList<>();
+        if(!creator.getName().equals(except))
+            users.add(creator);
+
+        for(BillUser a : this.users)
+            if(!a.getName().equals(except))
+                users.add(a);
+
+        return users;
+    }
+
     public BillUser getUser(String name) {
         if(name.equals(creator.name))
             return creator;
@@ -32,6 +79,10 @@ public class Bill {
             if(a.getName().equals(name))
                 return a;
         return null;
+    }
+
+    public int getUsersCount() {
+        return this.users.length + 1; // + 1 => creator
     }
 
     public Posten getPosten(String id) {

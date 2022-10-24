@@ -25,7 +25,13 @@
         android:visibility="gone" />
 
     <include layout="@layout/ms_bill_info_users"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
+    <include layout="@layout/ms_bill_info_costs_summary"
+        android:visibility="gone" />
+
+    <include layout="@layout/ms_bill_info_own_summary"
+        android:visibility="gone" />
 
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"

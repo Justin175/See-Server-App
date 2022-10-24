@@ -1,6 +1,10 @@
 package com.treulieb.worktimetool;
 
+import android.app.Activity;
+import android.content.Context;
+import android.os.IBinder;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,11 +20,14 @@ public class ViewManager {
     private Map<View, View> parents;
 
     private View currentView;
+    private Activity activity;
 
-    public ViewManager() {
+    public ViewManager(Activity activity) {
         this.onChangeListener = new HashMap<>();
         this.onShowListener = new HashMap<>();
         this.parents = new HashMap<>();
+
+        this.activity = activity;
     }
 
     public Map<View, Consumer<View>> getOnChangeListener() {
@@ -43,6 +50,12 @@ public class ViewManager {
             toShow.setVisibility(View.VISIBLE);
             currentView = toShow;
             return;
+        }
+
+        View focus;
+        if((focus = activity.getCurrentFocus()) != null) {
+            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(focus.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
 
         this.onShowListener.get(toShow).run();

@@ -33,6 +33,8 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
 
     private AddPostenLayout addPostenLayout;
     private BillUsersLayout billUsersLayout;
+    private BillInfoSummaryLayout summaryLayout;
+    private OwnSummaryLayout ownSummaryLayout;
 
     public BillInfoLayout(Activity activity, ViewManager viewManager, ConstraintLayout thisView, View parentView) {
         super(activity, viewManager, thisView, parentView);
@@ -42,6 +44,8 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
     protected void setup() {
         addPostenLayout = new AddPostenLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_add_posten), this);
         billUsersLayout = new BillUsersLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_users), this);
+        summaryLayout = new BillInfoSummaryLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_costs_summary), this);
+        ownSummaryLayout = new OwnSummaryLayout(activity, viewManager, activity.findViewById(R.id.ms_bill_info_own_summary), this);
     }
 
     public Bill getCurrentBill() {
@@ -134,6 +138,16 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
                 return true;
             });
         }
+
+        menu.getMenu().add("Gesamtübersicht anzeigen").setOnMenuItemClickListener(item -> {
+            summaryLayout.show();
+            return true;
+        });
+
+        menu.getMenu().add("Eigene Übersicht anzeigen").setOnMenuItemClickListener(item -> {
+            ownSummaryLayout.show();
+            return true;
+        });
 
         // Listener hinzufügen
 

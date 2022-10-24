@@ -27,6 +27,13 @@ public class Posten {
         this.to = to;
     }
 
+    public boolean isForAllUsers() {
+        if(to.length == 0) return true;
+        if(to[0].equals("$")) return true;
+
+        return false;
+    }
+
     public String[] getTo() {
         return to;
     }
@@ -53,6 +60,17 @@ public class Posten {
 
     public String getCreated() {
         return created;
+    }
+
+    public boolean containsTo(String user) {
+        if(isForAllUsers())
+            return true;
+
+        for(String to : this.getTo())
+            if(to.equals(user))
+                return true;
+
+        return false;
     }
 
     public static Posten fromJSON(String id, JSONObject postenData) {

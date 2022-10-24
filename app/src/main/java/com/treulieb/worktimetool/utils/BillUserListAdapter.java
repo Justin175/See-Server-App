@@ -21,15 +21,29 @@ import java.util.List;
 public class BillUserListAdapter extends ArrayAdapter<Bill.BillUser> {
 
     private LayoutInflater inflater;
+    private boolean hidePrivileges;
 
     public BillUserListAdapter(@NonNull Context context) {
-        this(context, new ArrayList<>());
+        this(context, new ArrayList<>(), false);
+    }
+
+    public BillUserListAdapter(@NonNull Context context, boolean hidePrivileges) {
+        this(context, new ArrayList<>(), hidePrivileges);
     }
 
     public BillUserListAdapter(@NonNull Context context, List<Bill.BillUser> users) {
+        this(context, users, false);
+    }
+
+    public BillUserListAdapter(@NonNull Context context, List<Bill.BillUser> users, boolean hidePrivileges) {
         super(context, R.layout.support_simple_spinner_dropdown_item, users);
 
-        inflater = LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
+        this.hidePrivileges = hidePrivileges;
+    }
+
+    public boolean isHidingPrivileges() {
+        return hidePrivileges;
     }
 
     @NonNull
@@ -40,7 +54,7 @@ public class BillUserListAdapter extends ArrayAdapter<Bill.BillUser> {
         View view = inflater.inflate(R.layout.ms_bill_info_users_userinfo, null);
 
         ((TextView) view.findViewById(R.id.ms_bill_info_users_userinfo_name)).setText(user.getName());
-        ((TextView) view.findViewById(R.id.ms_bill_info_users_userinfo_privs)).setText(Bill.BillPrivilege.toString(user.getPrivileges()));
+        ((TextView) view.findViewById(R.id.ms_bill_info_users_userinfo_privs)).setText(this.hidePrivileges ? "" : Bill.BillPrivilege.toString(user.getPrivileges()));
 
         return view;
     }

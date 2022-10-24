@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,7 +50,10 @@ public class BillUsersLayout extends BaseLayout<LinearLayout> {
         this.userIndex = position - 1;
 
         PopupMenu menu = new PopupMenu(activity, view);
-        menu.getMenu().add(createColoredString(Color.RED, "Bearbeiten"));
+        menu.getMenu().add(createColoredString(Color.argb(255, 173, 118, 14), "Bearbeiten")).setOnMenuItemClickListener(item -> {
+            setupAndShowUpdateUserPrivsPopup();
+            return true;
+        });
         menu.getMenu().add(createColoredString(Color.RED, "Löschen")).setOnMenuItemClickListener(item -> {
             return removeUserFromBill();
         });
@@ -100,7 +104,7 @@ public class BillUsersLayout extends BaseLayout<LinearLayout> {
         LayoutInflater inflater = activity.getLayoutInflater();
         View popupView = inflater.inflate(R.layout.ms_bill_info_add_user, null);
 
-        popupView.findViewById(R.id.ms_bill_info_add_user_priv_configure).setEnabled(billInfoLayout.hasPrivileg(Bill.BillPrivilege.CONFIGURE));
+        popupView.findViewById(R.id.ms_bill_info_add_user_priv_configure).setVisibility(billInfoLayout.hasPrivileg(Bill.BillPrivilege.CONFIGURE) ? View.VISIBLE : View.GONE);
 
         // setup current
         Bill.BillUser user = billInfoLayout.getCurrentBill().getUsers()[this.userIndex];
@@ -125,9 +129,11 @@ public class BillUsersLayout extends BaseLayout<LinearLayout> {
             popupWindow.dismiss();
         });
 
-        popupView.findViewById(R.id.ms_bill_info_add_user_btn).setOnClickListener(v -> {
+        Button updateBtn = popupView.findViewById(R.id.ms_bill_info_add_user_btn);
+        updateBtn.setOnClickListener(v -> {
             updatePrivileges(popupView, popupWindow);
         });
+        updateBtn.setText("Aktualisieren");
     }
 
     private void updatePrivileges(View popupView, final PopupWindow popupWindow) {
@@ -146,11 +152,12 @@ public class BillUsersLayout extends BaseLayout<LinearLayout> {
             privString += Bill.BillPrivilege.toString(Bill.BillPrivilege.CONFIGURE);
 
         final String finalPrivString = privString;
-        SeeServerRequests.updateUserFromBill(billInfoLayout.getCurrentBill().getName(), name, privString, response -> {
+        SeeServerRequests.updateUserPrivilegesFromBill(billInfoLayout.getCurrentBill().getName(), name, privString, response -> {
             if(response.isSuccessful()) {
                 makeToast("Die Berechtigungen wurden erfolgreich geändert.");
                 billInfoLayout.getCurrentBill().getUsers()[userIndex].setPrivileges(Bill.BillPrivilege.fromString(finalPrivString)); // TODO: Liste updaten
                 popupWindow.dismiss();
+                setupUsersList();
             }
             else makeToast(response.getMessage());
         }, error -> {

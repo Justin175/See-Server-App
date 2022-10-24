@@ -135,7 +135,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
@@ -146,7 +146,7 @@
 
             <ListView
                 android:id="@+id/ms_bill_info_add_posten_users"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
 

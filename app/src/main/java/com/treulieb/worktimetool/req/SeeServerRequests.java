@@ -10,10 +10,13 @@ import androidx.annotation.RequiresApi;
 import com.android.volley.Response;
 import com.treulieb.worktimetool.JSONUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public final class SeeServerRequests {
 
@@ -172,7 +175,7 @@ public final class SeeServerRequests {
                 posten.put("info", info);
             posten.put("creator", creator == null ? NAME : creator);
             if(to != null)
-                posten.put("to", to);
+                posten.put("to", new JSONArray(Arrays.asList(to)));
 
             toPost.put("posten", posten);
         } catch (JSONException e) {
@@ -217,7 +220,7 @@ public final class SeeServerRequests {
         doDefaultGenericPost("removeUserFromBill", listener, errorListener, toPost, SeeServerResponses.ResponseRemoveUserFromBill.class);
     }
 
-    public static void updateUserFromBill(String billName, String userName, String privsStr, SeeServerResponses.ResponseCallback<SeeServerResponses.ResponseUpdateUserPrivileges> listener, Response.ErrorListener errorListener) {
+    public static void updateUserPrivilegesFromBill(String billName, String userName, String privsStr, SeeServerResponses.ResponseCallback<SeeServerResponses.ResponseUpdateUserPrivileges> listener, Response.ErrorListener errorListener) {
         JSONObject toPost = new JSONObject();
         JSONObject bill = new JSONObject();
 
@@ -231,7 +234,7 @@ public final class SeeServerRequests {
             e.printStackTrace();
         }
 
-        doDefaultGenericPost("removeUserFromBill", listener, errorListener, toPost, SeeServerResponses.ResponseUpdateUserPrivileges.class);
+        doDefaultGenericPost("updateUserPrivileges", listener, errorListener, toPost, SeeServerResponses.ResponseUpdateUserPrivileges.class);
     }
 
 

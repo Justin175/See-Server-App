@@ -42,7 +42,7 @@ public class MainSite extends AppCompatActivity {
     private RechnungenLayout layoutRechnungen;
     private AddLayout layoutAdd;
 
-    private ViewManager viewManager = new ViewManager();
+    private ViewManager viewManager = new ViewManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
