@@ -11,7 +11,10 @@ import com.treulieb.worktimetool.data.Bill;
 import com.treulieb.worktimetool.data.Posten;
 import com.treulieb.worktimetool.req.SeeServerRequests;
 
+import java.math.BigDecimal;
 import java.util.List;
+
+import static com.treulieb.worktimetool.utils.MathUtils.decimal;
 
 public class OwnSummaryLayout extends BaseLayout<ScrollView> {
 
@@ -37,11 +40,11 @@ public class OwnSummaryLayout extends BaseLayout<ScrollView> {
     }
 
     private void setInfos() {
-        List<Posten> ownPaided = currentBill.getPostenPaidedFrom(SeeServerRequests.getNAME());
+        List<Posten> ownPaid = currentBill.getPostenPaidedFrom(SeeServerRequests.getNAME());
         List<Posten> stillToPay = currentBill.getToPayPosten(SeeServerRequests.getNAME());
 
-        float outcome = (float) ownPaided.stream().mapToDouble(Posten::getCosts).sum();
-        float toPay = (float) stillToPay.stream().mapToDouble(Posten::getCosts).sum();
+        BigDecimal outcome = ownPaid.stream().map(Posten::getCosts).reduce(decimal(0), BigDecimal::add);
+        BigDecimal toPay = stillToPay.stream().filter(posten -> !posten.getCreator().equals(SeeServerRequests.getNAME())).map(posten -> posten.getPartialCosts(currentBill.getPart(posten))).reduce(decimal(0), BigDecimal::add);
 
         ((TextView) thisView.findViewById(R.id.ms_bill_info_own_summary_outcome)).setText(outcome + " €");
         ((TextView) thisView.findViewById(R.id.ms_bill_info_own_summary_outcome_open)).setText(outcome + " €");

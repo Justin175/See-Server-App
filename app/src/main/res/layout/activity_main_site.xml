@@ -1,42 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainSite">
 
-    <include layout="@layout/ms_rechnungen"
-        android:visibility="gone" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top">
 
-    <include layout="@layout/ms_add"
-        android:visibility="gone" />
+        <include layout="@layout/ms_rechnungen"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_add_user"
-        android:visibility="gone" />
+        <include layout="@layout/ms_add"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_add_bill"
-        android:visibility="gone" />
+        <include layout="@layout/ms_add_user"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_bill_info"
-        android:visibility="gone" />
+        <include layout="@layout/ms_add_bill"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_bill_info_add_posten"
-        android:visibility="gone" />
+        <include layout="@layout/ms_bill_info"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_bill_info_users"
-        android:visibility="gone" />
+        <include layout="@layout/ms_bill_info_add_posten"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_bill_info_costs_summary"
-        android:visibility="gone" />
+        <include layout="@layout/ms_bill_info_users"
+            android:visibility="gone" />
 
-    <include layout="@layout/ms_bill_info_own_summary"
-        android:visibility="gone" />
+        <include layout="@layout/ms_bill_info_costs_summary"
+            android:visibility="gone" />
+
+        <include layout="@layout/ms_bill_info_own_summary"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ms_tabs"
+        android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -57,4 +64,4 @@
             android:text="Einstellungen" />
     </com.google.android.material.tabs.TabLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

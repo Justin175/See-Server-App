@@ -15,6 +15,7 @@ import com.treulieb.worktimetool.data.Bill;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class BillUserListAdapter extends ArrayAdapter<Bill.BillUser> {
 
     private LayoutInflater inflater;
     private boolean hidePrivileges;
+
+    private HashMap<Integer, View> inflatedViews;
 
     public BillUserListAdapter(@NonNull Context context) {
         this(context, new ArrayList<>(), false);
@@ -40,6 +43,7 @@ public class BillUserListAdapter extends ArrayAdapter<Bill.BillUser> {
 
         this.inflater = LayoutInflater.from(context);
         this.hidePrivileges = hidePrivileges;
+        this.inflatedViews = new HashMap<>();
     }
 
     public boolean isHidingPrivileges() {
@@ -49,12 +53,18 @@ public class BillUserListAdapter extends ArrayAdapter<Bill.BillUser> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View inflated = inflatedViews.get(position);
+        if(inflated != null)
+            return inflated;
+
         Bill.BillUser user = getItem(position);
 
         View view = inflater.inflate(R.layout.ms_bill_info_users_userinfo, null);
 
         ((TextView) view.findViewById(R.id.ms_bill_info_users_userinfo_name)).setText(user.getName());
         ((TextView) view.findViewById(R.id.ms_bill_info_users_userinfo_privs)).setText(this.hidePrivileges ? "" : Bill.BillPrivilege.toString(user.getPrivileges()));
+
+        this.inflatedViews.put(position, view);
 
         return view;
     }

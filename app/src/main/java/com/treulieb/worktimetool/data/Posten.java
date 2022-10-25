@@ -1,23 +1,28 @@
 package com.treulieb.worktimetool.data;
 
 import com.treulieb.worktimetool.JSONUtils;
+import com.treulieb.worktimetool.utils.MathUtils;
 
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.treulieb.worktimetool.utils.MathUtils.decimal;
+
 public class Posten {
     private String id;
     private String title;
-    private float costs;
+    private BigDecimal costs;
     private String info;
     private String creator;
     private String created;
     private String[] to;
 
-    public Posten(String id, String title, float costs, String info, String creator, String created, String[] to) {
+    public Posten(String id, String title, BigDecimal costs, String info, String creator, String created, String[] to) {
         this.id = id;
         this.title = title;
         this.costs = costs;
@@ -46,8 +51,16 @@ public class Posten {
         return title;
     }
 
-    public float getCosts() {
+    public BigDecimal getCosts() {
         return costs;
+    }
+
+    public BigDecimal getPartialCosts(int part) {
+        return getPartialCosts(decimal(part));
+    }
+
+    public BigDecimal getPartialCosts(BigDecimal part) {
+        return costs.divide(part, MathUtils.ROUNDING_MODE);
     }
 
     public String getInfo() {
@@ -79,7 +92,7 @@ public class Posten {
         return new Posten(
                 id,
                 data.optString("title"),
-                (float) data.optDouble("costs"),
+                decimal(data.optString("costs")),
                 data.optString("p_info"),
                 data.optString("creator"),
                 data.optString("created"),
@@ -91,7 +104,7 @@ public class Posten {
         return new Posten(
                 null,
                 posten.optString("title"),
-                (float) posten.optDouble("costs"),
+                decimal(posten.optString("costs")),
                 posten.optString("p_info"),
                 posten.optString("creator"),
                 posten.optString("created"),

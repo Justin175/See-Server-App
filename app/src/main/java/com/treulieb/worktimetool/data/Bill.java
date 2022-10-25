@@ -2,10 +2,15 @@ package com.treulieb.worktimetool.data;
 
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.treulieb.worktimetool.utils.MathUtils.decimal;
 
 public class Bill {
     private String name;
@@ -13,9 +18,9 @@ public class Bill {
     private String created;
     private Posten[] posten;
     private BillUser[] users;
-    private float costsSum;
+    private BigDecimal costsSum;
 
-    public Bill(String name, BillUser creator, String created, Posten[] posten, BillUser[] users, float costsSum) {
+    public Bill(String name, BillUser creator, String created, Posten[] posten, BillUser[] users, BigDecimal costsSum) {
         this.name = name;
         this.creator = creator;
         this.created = created;
@@ -71,6 +76,13 @@ public class Bill {
         return users;
     }
 
+    public BigDecimal getPart(Posten posten) {
+        if(posten.isForAllUsers())
+            return decimal(this.users.length + 1);
+
+        return decimal(this.users.length);
+    }
+
     public BillUser getUser(String name) {
         if(name.equals(creator.name))
             return creator;
@@ -96,14 +108,14 @@ public class Bill {
     public void removePosten(String id){
         Posten[] nPosten = new Posten[this.posten.length];
         int index = 0;
-        float costs = 0;
+        BigDecimal costs = decimal(0);
 
         for(Posten a : this.posten){
             if(a.getId().equals(id))
                 continue;
 
             nPosten[index++] = a;
-            costs += a.getCosts();
+            costs = costs.add(a.getCosts());
         }
 
         this.posten = nPosten;
@@ -149,7 +161,7 @@ public class Bill {
         return users;
     }
 
-    public float getCostsSum() {
+    public BigDecimal getCostsSum() {
         return costsSum;
     }
 

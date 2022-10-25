@@ -29,7 +29,6 @@ import java.util.List;
 public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
 
     private Bill currentBill;
-    private boolean[] billMarkedUseres;
 
     private AddPostenLayout addPostenLayout;
     private BillUsersLayout billUsersLayout;

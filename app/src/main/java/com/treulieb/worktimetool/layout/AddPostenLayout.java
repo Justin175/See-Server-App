@@ -30,6 +30,8 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
     private List<Bill.BillUser> billMarkedUseres;
     private List<Bill.BillUser> allUsers;
 
+    private final int markedColor =  Color.parseColor("#a3e6f5");
+
     public AddPostenLayout(Activity activity, ViewManager viewManager, ScrollView thisView, BillInfoLayout parentView) {
         super(activity, viewManager, thisView, parentView);
 
@@ -61,10 +63,9 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         allUsers.add(currentBill.getCreator());
         allUsers.addAll(Arrays.asList(currentBill.getUsers()));
 
-        billMarkedUseres.addAll(allUsers);
-
+        BillUserListAdapter billUserListAdapter = new BillUserListAdapter(activity, allUsers, true);
         ListView usersListView = ((ListView) findViewById(R.id.ms_bill_info_add_posten_users));
-        usersListView.setAdapter(new BillUserListAdapter(activity, allUsers, true));
+        usersListView.setAdapter(billUserListAdapter);
         usersListView.setOnItemClickListener((parent, view, position, id) -> {
             Bill.BillUser clickedOn = this.allUsers.get(position);
             boolean contains;
@@ -74,8 +75,13 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
             else
                 this.billMarkedUseres.add(clickedOn);
 
-            view.setBackgroundColor(!contains ? Color.parseColor("#a3e6f5") : 0);
+            view.setBackgroundColor(!contains ? markedColor : 0);
         });
+
+        billMarkedUseres.addAll(allUsers); // all added
+        //mark all
+        for(int i = 0; i < billUserListAdapter.getCount(); i++)
+            billUserListAdapter.getView(i, null, null).setBackgroundColor(markedColor); // because of marked
     }
 
     private void addPosten() {

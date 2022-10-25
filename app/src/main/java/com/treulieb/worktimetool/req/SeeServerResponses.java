@@ -6,6 +6,8 @@ import com.treulieb.worktimetool.data.Posten;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.treulieb.worktimetool.utils.MathUtils.decimal;
+
 public class SeeServerResponses {
 
     public static abstract class BaseResponse {
@@ -200,7 +202,7 @@ public class SeeServerResponses {
                     billData.optString("created"),
                     Posten.fromJSON(billData.optJSONObject("posten")),
                     Bill.BillUser.fromJSON(billData.optJSONObject("users")),
-                    (float) billData.optDouble("costs_sum")
+                    decimal(billData.optString("costs_sum"))
             );
         }
 

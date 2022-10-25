@@ -12,11 +12,13 @@ import com.treulieb.worktimetool.R;
 import com.treulieb.worktimetool.ViewManager;
 import com.treulieb.worktimetool.data.Bill;
 import com.treulieb.worktimetool.data.Posten;
+import com.treulieb.worktimetool.utils.MathUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+
+import static com.treulieb.worktimetool.utils.MathUtils.decimal;
 
 public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
 
@@ -86,7 +88,7 @@ public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
 
     private class UserOverview {
         String name;
-        float sum = 0, open = 0;
+        BigDecimal sum = decimal(0), open = decimal(0);
         HashMap<String, FromPerson> persons;
 
         public UserOverview(Bill.BillUser user) {
@@ -96,8 +98,8 @@ public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
 
         public void addPosten(Posten posten, Bill bill) {
             // add to here
-            this.sum += posten.getCosts();
-            this.open += posten.getCosts();
+            this.sum = this.sum.add(posten.getCosts());
+            this.open = this.open.add(posten.getCosts());
 
             // add to users
             if(posten.isForAllUsers()){
@@ -130,24 +132,27 @@ public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
         }
 
         private void updatePerson(FromPerson person, Posten posten, Bill bill){
-            person.sum += (posten.isForAllUsers() ? posten.getCosts() / bill.getUsersCount() : posten.getCosts() / posten.getTo().length);
-            person.open += (posten.isForAllUsers() ? posten.getCosts() / bill.getUsersCount() : posten.getCosts() / posten.getTo().length);
+            BigDecimal partialCosts = posten.isForAllUsers()
+                    ? posten.getCosts().divide(decimal(bill.getUsersCount()), MathUtils.ROUNDING_MODE)
+                    : posten.getCosts().divide(decimal(posten.getTo().length), MathUtils.ROUNDING_MODE);
+            person.sum = person.sum.add(partialCosts);
+            person.open = person.open.add(partialCosts);
             // TODO: OPEN
         }
     }
 
     private class FromPerson {
         String name;
-        float sum, open;
+        BigDecimal sum, open;
         com.treulieb.worktimetool.data.Posten posten;
 
         public FromPerson(String name, com.treulieb.worktimetool.data.Posten posten, Bill bill) {
             this.name = name;
 
             if(posten.isForAllUsers())
-                this.sum = posten.getCosts() / bill.getUsersCount();
+                this.sum = posten.getCosts().divide(decimal(bill.getUsersCount()), MathUtils.ROUNDING_MODE);
             else
-                this.sum = posten.getCosts() / posten.getTo().length;
+                this.sum = posten.getCosts().divide(decimal(posten.getTo().length), MathUtils.ROUNDING_MODE);
 
             this.open = sum;
             this.posten = posten;
