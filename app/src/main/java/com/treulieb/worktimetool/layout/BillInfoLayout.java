@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,7 +27,7 @@ import com.treulieb.worktimetool.utils.ViewListAdapter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
+public class BillInfoLayout extends BaseLayout<ScrollView> {
 
     private Bill currentBill;
 
@@ -35,7 +36,7 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
     private BillInfoSummaryLayout summaryLayout;
     private OwnSummaryLayout ownSummaryLayout;
 
-    public BillInfoLayout(Activity activity, ViewManager viewManager, ConstraintLayout thisView, View parentView) {
+    public BillInfoLayout(Activity activity, ViewManager viewManager, ScrollView thisView, View parentView) {
         super(activity, viewManager, thisView, parentView);
     }
 
@@ -66,7 +67,7 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
         ((TextView) findViewById(R.id.ms_bill_info_creator)).setText(creator = bill.getCreator().getName());
         ((TextView) findViewById(R.id.ms_bill_info_costs_sum)).setText(bill.getCostsSum() + " €");
 
-        ListView postenView = findViewById(R.id.ms_bill_info_posten);
+        LinearLayout postenView = findViewById(R.id.ms_bill_info_posten);
         LayoutInflater inflater = LayoutInflater.from(activity);
         List<View> items = new LinkedList();
 
@@ -76,46 +77,44 @@ public class BillInfoLayout extends BaseLayout<ConstraintLayout> {
             ((TextView) postenInfoView.findViewById(R.id.ms_bill_info_posten_title)).setText(posten.getTitle());
             ((TextView) postenInfoView.findViewById(R.id.ms_bill_info_posten_costs)).setText("" + posten.getCosts() + " €");
 
-            items.add(postenInfoView);
-        }
+            PopupMenu menu = new PopupMenu(activity, postenInfoView);
 
-        postenView.setAdapter(new ViewListAdapter(activity, R.layout.support_simple_spinner_dropdown_item, items));
-        postenView.setOnItemLongClickListener((parent, view, position, id) -> {
-            PopupMenu menu = new PopupMenu(activity, view);
-            String postenID = ((TextView) view.findViewById(R.id.ms_bill_info_posten_id)).getText().toString();
+            menu.getMenu().add("Erstellt von " + posten.getCreator()).setOnMenuItemClickListener(item -> false);
+            menu.getMenu().add("Erstellt am " + posten.getCreated()).setOnMenuItemClickListener(item -> false);
+            if(hasPrivileg(Bill.BillPrivilege.WRITE))
+                menu.getMenu().add(createColoredString(Color.RED, "Löschen")).setOnMenuItemClickListener(item -> {
+                    deletePosten(posten);
+                    return true;
+                } );
 
-            menu.setOnMenuItemClickListener(item -> {
-                if(item.getTitle().toString().contains("Löschen")){
-                    SeeServerRequests.deletePosten(currentBill.getName(), postenID, response -> {
-                        if(response.optBoolean("successful")) {
-                            makeToast("Posten wurde erfolgreich gelöscht.");
-                            SeeServerRequests.getBill(currentBill.getName(), response1 -> {
-                                if(response1.isSuccessful()) {
-                                    setBillInfos(response1.getBill());
-                                }
-                            }, error -> {});
-                        }
-                    }, error -> {});
-                }
+            postenInfoView.setOnLongClickListener(v -> {
+                menu.show();
                 return true;
             });
 
-            Posten posten = bill.getPosten(postenID);
-
-            menu.getMenu().add("Erstellt von " + posten.getCreator());
-            menu.getMenu().add("Erstellt am " + posten.getCreated());
-            if(hasPrivileg(Bill.BillPrivilege.WRITE))
-                menu.getMenu().add(createColoredString(Color.RED, "Löschen"));
-            menu.show();
-
-            return true;
-        });
+            postenView.addView(postenInfoView);
+        }
 
         setupBillPopupMenu();
     }
 
+    private void deletePosten(Posten posten) {
+        SeeServerRequests.deletePosten(currentBill.getName(), posten.getId(), response -> {
+            if (response.optBoolean("successful")) {
+                makeToast("Posten wurde erfolgreich gelöscht.");
+                SeeServerRequests.getBill(currentBill.getName(), response1 -> {
+                    if (response1.isSuccessful()) {
+                        setBillInfos(response1.getBill());
+                    }
+                }, error -> {
+                });
+            }
+        }, error -> {
+        });
+    }
+
     private void setupBillPopupMenu() {
-        PopupMenu menu = new PopupMenu(activity, thisView.getViewById(R.id.ms_bill_info_btn_open_info));
+        PopupMenu menu = new PopupMenu(activity, thisView.findViewById(R.id.ms_bill_info_btn_open_info));
         if(hasPrivileg(Bill.BillPrivilege.CONFIGURE)) {
             menu.getMenu().add(createColoredString(Color.RED, "Löschen")).setOnMenuItemClickListener(item -> {
                 deleteCurrentBill();

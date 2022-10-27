@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -20,7 +21,7 @@ import java.util.HashMap;
 
 import static com.treulieb.worktimetool.utils.MathUtils.decimal;
 
-public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
+public class BillInfoSummaryLayout extends BaseLayout<ScrollView> {
 
     private BillInfoLayout infoLayout;
     private LayoutInflater inflater;
@@ -29,7 +30,7 @@ public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
 
     private HashMap<String, UserOverview> overviewMap;
 
-    public BillInfoSummaryLayout(Activity activity, ViewManager viewManager, ConstraintLayout thisView, BillInfoLayout parentView) {
+    public BillInfoSummaryLayout(Activity activity, ViewManager viewManager, ScrollView thisView, BillInfoLayout parentView) {
         super(activity, viewManager, thisView, parentView);
 
         this.infoLayout = parentView;
@@ -74,6 +75,9 @@ public class BillInfoSummaryLayout extends BaseLayout<ConstraintLayout> {
 
         LinearLayout costsView = (LinearLayout) overview.findViewById(R.id.ms_bill_info_costs_from);
         for(FromPerson p : user.persons.values()) {
+            if(p.name.equals(user.name))
+                continue;
+
             View toPayView = inflater.inflate(R.layout.ms_bill_info_costs_info_user_info, null);
 
             ((TextView) toPayView.findViewById(R.id.user_name)).setText(p.name);

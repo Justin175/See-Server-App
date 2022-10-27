@@ -26,6 +26,7 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
 
     private BillInfoLayout billInfoLayout;
     private Bill currentBill;
+    private BillUserListAdapter billUserListAdapter;
 
     private List<Bill.BillUser> billMarkedUseres;
     private List<Bill.BillUser> allUsers;
@@ -44,6 +45,24 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
 
         this.billMarkedUseres = new LinkedList<>();
         this.allUsers = new ArrayList<>();
+
+        this.findViewById(R.id.ms_bill_info_add_posten_btn_markall).setOnClickListener(v -> {
+            if(billUserListAdapter != null) {
+                int marked = this.billMarkedUseres.size();
+                boolean markAll;
+
+                if(markAll = (marked < currentBill.getUsersCount())) { // mark all
+                    this.billMarkedUseres.clear();
+                    this.billMarkedUseres.addAll(this.allUsers);
+                }
+                else { // unmark all
+                    this.billMarkedUseres.clear();
+                }
+
+                for(int i = 0; i < this.billUserListAdapter.getCount(); i++)
+                    this.billUserListAdapter.getView(i, null, null).setBackgroundColor(markAll ? this.markedColor : 0);
+            }
+        });
     }
 
     @Override
@@ -63,7 +82,7 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         allUsers.add(currentBill.getCreator());
         allUsers.addAll(Arrays.asList(currentBill.getUsers()));
 
-        BillUserListAdapter billUserListAdapter = new BillUserListAdapter(activity, allUsers, true);
+        billUserListAdapter = new BillUserListAdapter(activity, allUsers, true);
         ListView usersListView = ((ListView) findViewById(R.id.ms_bill_info_add_posten_users));
         usersListView.setAdapter(billUserListAdapter);
         usersListView.setOnItemClickListener((parent, view, position, id) -> {
@@ -98,6 +117,11 @@ public class AddPostenLayout extends BaseLayout<ScrollView> {
         // check costs str
         if(!costs.matches("[0-9\\.,]+")) {
             makeToast("Du hast bei den Kosten keine Zahl angegeben.");
+            return;
+        }
+
+        if(this.billMarkedUseres.size() == 0) {
+            makeToast("Es wurden eine Personen angegeben, an die die Rechnung gehen soll.");
             return;
         }
 

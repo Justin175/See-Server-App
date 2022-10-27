@@ -137,10 +137,10 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
-            android:outlineSpotShadowColor="@color/black"
             android:outlineAmbientShadowColor="@color/red"
+            android:outlineSpotShadowColor="@color/black"
             app:layout_constraintStart_toStartOf="@+id/textView23"
             app:layout_constraintTop_toBottomOf="@+id/textView23">
 
@@ -158,6 +158,16 @@
             android:text="(Namen anklicken zum makieren)"
             app:layout_constraintStart_toEndOf="@+id/textView23"
             app:layout_constraintTop_toTopOf="@+id/textView23" />
+
+        <Button
+            android:id="@+id/ms_bill_info_add_posten_btn_markall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M"
+            app:layout_constraintBottom_toBottomOf="@+id/textView26"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView26"
+            app:layout_constraintTop_toTopOf="@+id/textView26" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
